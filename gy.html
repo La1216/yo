@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Forgive Me? — A Dev's Apology</title>
+  <style>
+    :root {
+      --bg1:#0f172a;
+      --bg2:#3b0b73;
+      --accent:#ff6b81;
+      --card:#0b1220aa;
+      --glass: rgba(255,255,255,0.06);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+      background: radial-gradient(1200px 700px at 10% 10%, rgba(255,107,129,0.06), transparent),
+                  linear-gradient(120deg,var(--bg1),var(--bg2));
+      color: #e6eef8;
+      display: flex; align-items: center; justify-content: center;
+      overflow-x: hidden;
+    }
+
+    .card {
+      width: min(820px, 95vw);
+      padding: 22px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+    .logo {
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      background: linear-gradient(135deg,var(--accent), #ff9aad);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 20px; color: #fff;
+      box-shadow: 0 6px 18px rgba(255,107,129,0.12);
+    }
+    h1 { margin: 0; font-size: 18px; }
+    p.lead { margin: 0; color: rgba(230,238,248,0.85); font-size: 13px; }
+
+    .content { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+    .left { flex: 1; min-width: 240px; }
+    .right { flex: 1; min-width: 200px; }
+
+    .apology-box {
+      background: var(--card);
+      padding: 14px;
+      border-radius: 12px;
+      min-height: 150px;
+      position: relative;
+    }
+    .type { 
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 0;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg,var(--accent),#ff9aad);
+      color: white;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(230,238,248,0.9);
+    }
+
+    /* Floating word + hearts */
+    .float-item {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: -40px;
+      opacity: 0;
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 18px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+    .heart {
+      position: absolute;
+      width: 20px; height: 20px;
+      left: 50%; bottom: -40px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .heart:before, .heart:after {
+      content: '';
+      position: absolute;
+      width: 12px; height: 20px;
+      background: var(--accent);
+      border-radius: 18px 18px 0 0;
+      transform-origin: bottom left;
+    }
+    .heart:before { left: 6px; transform: rotate(-45deg); }
+    .heart:after { left: 0; transform: rotate(45deg); }
+
+    footer { font-size: 12px; margin-top: 10px; text-align: center; color: rgba(230,238,248,0.6); }
+
+    @media (max-width: 600px) {
+      .card { padding: 16px; border-radius: 16px; }
+      h1 { font-size: 16px; }
+      p.lead { font-size: 12px; }
+      .type { font-size: 14px; }
+      .btn { font-size: 13px; padding: 10px; }
+      .float-item { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header>
+      <div class="logo">❤️</div>
+      <div>
+        <h1>Testy Baby?</h1>
+        <p class="lead">A little interactive apology, handcrafted by a boy called ~Ahmad~ who cares deeply.</p>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="left">
+        <div class="apology-box">
+          <div id="type" class="type" aria-live="polite"></div>
+          <div class="controls">
+            <button id="replay" class="btn btn-ghost">Replay</button>
+            <button id="serenade" class="btn btn-primary">Play Tune</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="right">
+        <div style="background:var(--glass);padding:14px;border-radius:12px;">
+          <strong>Testimony</strong>
+          <small style="display:block;margin-top:6px;color:rgba(230,238,248,0.7)">
+            My little cutie pie, smile for me. Always stay happy. Muahhh 💋 Kisses, love youuuuuuuuu...
+          </small>
+          <div style="margin-top:8px;text-align:center;opacity:0.9">💌</div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>Built with honest lines of code</footer>
+  </div>
+
+  <script>
+    const NAME = 'Testimony';
+    const MESSAGES = [
+      `Dear ${NAME},\n`,
+      `I don't know if this is necessary but I will say it.\n`,
+      `I am sorry. Not as a comment or a quick fix, but as an honest commit.\n`,
+      `You know I would not mean to hurt you in any way, mabinu baby.\n\n`,
+      `I was truly annoyed that day but I did not see it as something serious.\n\n`,
+      `Lots of love, from the heart, ~Ahmad~ ❤️`,
+    ];
+
+    const typeEl = document.getElementById('type');
+    const replay = document.getElementById('replay');
+    const serenade = document.getElementById('serenade');
+
+    function typeMessages(speed = 30) {
+      typeEl.textContent = '';
+      let i = 0, j = 0, current = '';
+      clearInterval(window._typing);
+      window._typing = setInterval(() => {
+        if (i >= MESSAGES.length) { clearInterval(window._typing); return }
+        const msg = MESSAGES[i];
+        current += msg[j++] || '';
+        typeEl.textContent = current + (j < msg.length ? '|' : '');
+
+        if (j % 5 === 0) launchWordAndHeart();
+
+        if (j >= msg.length) { i++; j = 0; current += '\n'; }
+      }, speed);
+    }
+
+    function playTune() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const now = ctx.currentTime;
+        const notes = [440, 523.25, 659.25, 784];
+        notes.forEach((f, idx) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = f;
+          g.gain.value = 0.0001;
+          o.connect(g); g.connect(ctx.destination);
+          o.start(now + idx * 0.2);
+          g.gain.linearRampToValueAtTime(0.06, now + idx * 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + 1);
+          o.stop(now + 1.2);
+        });
+      } catch (e) { console.warn('Audio not supported', e); }
+    }
+
+    function launchWordAndHeart() {
+      const word = document.createElement('div');
+      word.className = 'float-item';
+      word.textContent = 'TESTIMONY';
+      word.style.left = (10 + Math.random() * 70) + '%';
+      document.querySelector('.card').appendChild(word);
+      word.animate([
+        { transform: 'translateY(0) scale(0.7)', opacity: 0 },
+        { transform: 'translateY(-420px) scale(1)', opacity: 1 }
+      ], { duration: 3200, easing: 'ease-out' });
+      setTimeout(() => word.remove(), 4200);
+
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.style.left = (20 + Math.random() * 60) + '%';
+      document.querySelector('.card').appendChild(h);
+      h.animate([
+        { transform: 'translateY(0) scale(0.6)', opacity: 0 },
+        { transform: 'translateY(-420px) scale(1)', opacity: 1 }
+      ], { duration: 3000, easing: 'ease-out' });
+      setTimeout(() => h.remove(), 4000);
+    }
+
+    typeMessages();
+
+    replay.addEventListener('click', () => { typeMessages(); });
+    serenade.addEventListener('click', () => { playTune(); });
+  </script>
+</body>
+</html>
