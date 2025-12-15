@@ -1,245 +1,498 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Forgive Me? — A Dev's Apology</title>
-  <style>
-    :root {
-      --bg1:#0f172a;
-      --bg2:#3b0b73;
-      --accent:#ff6b81;
-      --card:#0b1220aa;
-      --glass: rgba(255,255,255,0.06);
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
-      background: radial-gradient(1200px 700px at 10% 10%, rgba(255,107,129,0.06), transparent),
-                  linear-gradient(120deg,var(--bg1),var(--bg2));
-      color: #e6eef8;
-      display: flex; align-items: center; justify-content: center;
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De Luwa Foods | The Noir Collection</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Manrope:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 
-    .card {
-      width: min(820px, 95vw);
-      padding: 22px;
-      border-radius: 20px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      box-shadow: 0 10px 40px rgba(2,6,23,0.6);
-      backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,0.04);
-      position: relative;
-      overflow: hidden;
-    }
+    <style>
+        /* --- 1. THE NOIR ENGINE (Variables) --- */
+        :root {
+            --bg: #050505;
+            --surface: #0f0f0f;
+            --surface-glass: rgba(20, 20, 20, 0.7);
+            --gold: #D4AF37;
+            --gold-dim: #8a701e;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+            --font-head: 'Cinzel', serif;
+            --font-body: 'Manrope', sans-serif;
+            --easing: cubic-bezier(0.19, 1, 0.22, 1);
+        }
 
-    header { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
-    .logo {
-      width: 50px; height: 50px;
-      border-radius: 12px;
-      background: linear-gradient(135deg,var(--accent), #ff9aad);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: 20px; color: #fff;
-      box-shadow: 0 6px 18px rgba(255,107,129,0.12);
-    }
-    h1 { margin: 0; font-size: 18px; }
-    p.lead { margin: 0; color: rgba(230,238,248,0.85); font-size: 13px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Hide default cursor */ }
 
-    .content { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-    .left { flex: 1; min-width: 240px; }
-    .right { flex: 1; min-width: 200px; }
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+        }
 
-    .apology-box {
-      background: var(--card);
-      padding: 14px;
-      border-radius: 12px;
-      min-height: 150px;
-      position: relative;
-    }
-    .type { 
-      white-space: pre-wrap;
-      font-size: 15px;
-      line-height: 1.5;
-      word-wrap: break-word;
-    }
+        /* --- 2. CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-circle {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot { width: 8px; height: 8px; background: var(--gold); }
+       .cursor-circle { 
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--gold);
+    transition:
+        left 0.15s ease-out,
+        top 0.15s ease-out,
+        width 0.3s,
+        height 0.3s,
+        background-color 0.3s;
+}
 
-    .controls { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-    .btn {
-      flex: 1;
-      padding: 12px;
-      border-radius: 10px;
-      border: 0;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-    }
-    .btn-primary {
-      background: linear-gradient(90deg,var(--accent),#ff9aad);
-      color: white;
-    }
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(230,238,248,0.9);
-    }
+        /* Hover State */
+        body.hovering .cursor-circle { width: 60px; height: 60px; background: rgba(212, 175, 55, 0.1); border-color: transparent; }
 
-    /* Floating word + hearts */
-    .float-item {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: -40px;
-      opacity: 0;
-      font-weight: 700;
-      color: var(--accent);
-      font-size: 18px;
-      text-shadow: 0 2px 6px rgba(0,0,0,0.4);
-      pointer-events: none;
-    }
-    .heart {
-      position: absolute;
-      width: 20px; height: 20px;
-      left: 50%; bottom: -40px;
-      opacity: 0;
-      pointer-events: none;
-    }
-    .heart:before, .heart:after {
-      content: '';
-      position: absolute;
-      width: 12px; height: 20px;
-      background: var(--accent);
-      border-radius: 18px 18px 0 0;
-      transform-origin: bottom left;
-    }
-    .heart:before { left: 6px; transform: rotate(-45deg); }
-    .heart:after { left: 0; transform: rotate(45deg); }
+        /* --- 3. SCROLL ANIMATIONS --- */
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s var(--easing); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
 
-    footer { font-size: 12px; margin-top: 10px; text-align: center; color: rgba(230,238,248,0.6); }
+        /* --- 4. NAVIGATION (Glassmorphism) --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 25px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; mix-blend-mode: difference;
+        }
+        .logo { font-family: var(--font-head); font-size: 1.5rem; letter-spacing: 2px; font-weight: 600; }
+        .cart-indicator { font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
 
-    @media (max-width: 600px) {
-      .card { padding: 16px; border-radius: 16px; }
-      h1 { font-size: 16px; }
-      p.lead { font-size: 12px; }
-      .type { font-size: 14px; }
-      .btn { font-size: 13px; padding: 10px; }
-      .float-item { font-size: 16px; }
-    }
-  </style>
+        /* --- 5. HERO SECTION --- */
+        .hero {
+            height: 100vh; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=1974&auto=format&fit=crop') center/cover;
+            filter: brightness(0.4); transform: scale(1.1);
+            animation: slowZoom 20s infinite alternate;
+        }
+        .hero-content { position: relative; z-index: 2; mix-blend-mode: normal; }
+        .hero h1 { font-family: var(--font-head); font-size: 5vw; line-height: 1.1; margin-bottom: 20px; color: #fff; }
+        .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 40px; color: #ccc; }
+        
+        .btn-luxury {
+            background: transparent; border: 1px solid var(--gold); color: var(--gold);
+            padding: 15px 40px; font-family: var(--font-body); text-transform: uppercase; letter-spacing: 3px;
+            font-size: 0.8rem; transition: 0.4s var(--easing); position: relative; overflow: hidden;
+        }
+        .btn-luxury:hover { background: var(--gold); color: #000; }
+/* --- 6. MENU (Editorial Layout) --- */
+.menu-section {
+  padding: 150px 10%;
+  background: var(--bg);
+  position: relative;
+}
+
+.section-header {
+  margin-bottom: 100px;
+  border-left: 2px solid var(--gold);
+  padding-left: 30px;
+}
+
+.section-header h2 {
+  font-family: var(--font-head);
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 30px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 80px;
+}
+
+.dish-card {
+  position: relative;
+}
+
+.dish-img-box {
+  height: 450px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+        .dish-img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--easing);
+            filter: grayscale(20%);
+        }
+        .dish-card:hover .dish-img { transform: scale(1.1); filter: grayscale(0%); }
+        
+        .dish-meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 15px; }
+        .dish-title { font-family: var(--font-head); font-size: 1.8rem; }
+        .dish-price { color: var(--gold); font-size: 1.2rem; font-weight: 600; }
+        .dish-desc { color: var(--text-muted); line-height: 1.8; margin-bottom: 20px; font-size: 0.95rem; }
+        
+        .order-link {
+            display: inline-block; color: #fff; text-transform: uppercase; 
+            font-size: 0.8rem; letter-spacing: 2px; padding-bottom: 5px;
+            border-bottom: 1px solid var(--gold); transition: 0.3s;
+        }
+        .order-link:hover { padding-bottom: 50px; color: var(--gold); }
+
+        /* --- 7. THE INTERACTIVE TABLE (Advanced Calculator) --- */
+        .interactive-table {
+            background: #0a0a0a; border-top: 1px solid #222; border-bottom: 1px solid #222;
+            padding: 100px 0; display: flex; flex-direction: column; align-items: center;
+        }
+        .calc-wrapper {
+            background: #111; padding: 50px; border: 1px solid #333;
+            width: 100%; max-width: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px;
+        }
+        .calc-controls h3 { font-family: var(--font-head); margin-bottom: 20px; color: var(--gold); }
+        .slider-container { margin: 30px 0; }
+        input[type=range] { width: 100%; accent-color: var(--gold); cursor: none; }
+        
+        .calc-display { border-left: 1px solid #333; padding-left: 50px; display: flex; flex-direction: column; justify-content: center; }
+        .calc-row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .calc-total { font-size: 1.5rem; color: var(--gold); margin-top: 20px; font-family: var(--font-head); }
+
+        /* --- 8. CHECKOUT MODAL (The Concierge) --- */
+        .modal-wrap {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .modal-wrap.open { opacity: 1; }
+        
+        .concierge-card {
+            background: #0f0f0f; width: 500px; border: 1px solid #333;
+            padding: 50px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            transform: translateY(50px); transition: transform 0.5s var(--easing);
+        }
+        .modal-wrap.open .concierge-card { transform: translateY(0); }
+        
+        .concierge-title { font-family: var(--font-head); font-size: 1.8rem; margin-bottom: 30px; text-align: center; color: #fff; }
+        
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group input, .input-group textarea {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid #333;
+            padding: 15px 0; color: #fff; font-family: var(--font-body); font-size: 1rem;
+            transition: 0.3s;
+        }
+        .input-group input:focus, .input-group textarea:focus { border-bottom-color: var(--gold); outline: none; }
+        .input-group label {
+            position: absolute; top: 15px; left: 0; color: #666; pointer-events: none;
+            transition: 0.3s ease; font-size: 0.9rem;
+        }
+        .input-group input:focus ~ label, .input-group input:valid ~ label {
+            top: -10px; font-size: 0.7rem; color: var(--gold);
+        }
+
+        .pay-btn {
+            width: 100%; padding: 20px; background: var(--gold); color: #000;
+            font-weight: 700; border: none; margin-top: 20px; text-transform: uppercase; letter-spacing: 2px;
+        }
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 1.5rem; color: #555; transition: 0.3s; }
+        .close-btn:hover { color: #fff; }
+
+        /* Keyframes */
+        @keyframes slowZoom { from { transform: scale(1.1); } to { transform: scale(1.25); } }
+        
+        /* Mobile Tweaks */
+        @media(max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .calc-wrapper { grid-template-columns: 1fr; padding: 20px; }
+            .calc-display { border-left: none; border-top: 1px solid #333; padding-left: 0; padding-top: 20px; }
+            .concierge-card { width: 90%; padding: 30px; }
+            /* Restore cursor on mobile */
+            * { cursor: auto; }
+            .cursor-dot, .cursor-circle { display: none; }
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <header>
-      <div class="logo">❤️</div>
-      <div>
-        <h1>Testy Baby?</h1>
-        <p class="lead">A little interactive apology, handcrafted by a boy called ~Ahmad~ who cares deeply.</p>
-      </div>
-    </header>
 
-    <div class="content">
-      <div class="left">
-        <div class="apology-box">
-          <div id="type" class="type" aria-live="polite"></div>
-          <div class="controls">
-            <button id="replay" class="btn btn-ghost">Replay</button>
-            <button id="serenade" class="btn btn-primary">Play Tune</button>
-          </div>
-        </div>
-      </div>
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-circle" id="cursor-circle"></div>
 
-      <aside class="right">
-        <div style="background:var(--glass);padding:14px;border-radius:12px;">
-          <strong>Testimony</strong>
-          <small style="display:block;margin-top:6px;color:rgba(230,238,248,0.7)">
-            My little cutie pie, smile for me. Always stay happy. Muahhh 💋 Kisses, love youuuuuuuuu...
-          </small>
-          <div style="margin-top:8px;text-align:center;opacity:0.9">💌</div>
+    <nav>
+        <div class="logo">DE LUWA</div>
+        <div class="cart-indicator">2026</div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="reveal">The Art of<br><span style="color:var(--gold);">Gastronomy</span></h1>
+            <p class="reveal">Experience dining at the intersection of fashion and flavor.</p>
+            <button class="btn-luxury hover-target reveal" onclick="scrollToSection('menu')">View Collection</button>
         </div>
-      </aside>
+    </section>
+
+    <section class="menu-section" id="menu">
+        <div class="section-header reveal">
+            <p>Season 1 / 2026  </p style="margin-top: 10px;padding:20px 20px 20px 20px ">
+            <h2>The Collection</h2>
+        </div>
+
+        <div class="menu-grid">
+            <div class="dish-card reveal">
+                <div class="dish-img-box">
+                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=2070&auto=format&fit=crop" class="dish-img" alt="Steak">
+                </div>
+                <div class="dish-meta">
+                    <span class="dish-title">Imperial Ribeye</span>
+                    <span class="dish-price">₦55,000</span>
+                </div>
+                <p class="dish-desc">45-day dry-aged wagyu, smoked rosemary essence, pommes purée.</p>
+                <div class="order-link hover-target" onclick="openConcierge('Imperial Ribeye', 55000)">Request Dish</div>
+            </div>
+
+            <div class="dish-card reveal">
+                <div class="dish-img-box">
+                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=2070&auto=format&fit=crop" class="dish-img" alt="Lobster">
+                </div>
+                <div class="dish-meta">
+                    <span class="dish-title">Oceans Gold</span>
+                    <span class="dish-price">₦42,000</span>
+                </div>
+                <p class="dish-desc">Butter-poached lobster tail, saffron risotto, 24k gold leaf.</p>
+                <div class="order-link hover-target" onclick="openConcierge('Oceans Gold', 42000)">Request Dish</div>
+            </div>
+
+            <div class="dish-card reveal">
+                <div class="dish-img-box">
+                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=1856&auto=format&fit=crop" class="dish-img" alt="Dessert">
+                </div>
+                <div class="dish-meta">
+                    <span class="dish-title">Midnight Silk</span>
+                    <span class="dish-price">₦18,000</span>
+                </div>
+                <p class="dish-desc">Dark chocolate sphere, raspberry fluid gel, hot caramel pour.</p>
+                <div class="order-link hover-target" onclick="openConcierge('Midnight Silk', 18000)">Request Dish</div>
+            </div>
+        </div>
+
+        <div class="section-header reveal">
+            <p>Season 1 / 2026</p>
+            <h2>The Collection</h2>
+        </div>
+
+        <div class="menu-grid">
+            <div class="dish-card reveal">
+                <div class="dish-img-box">
+                    <img src="https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=2070&auto=format&fit=crop" class="dish-img" alt="Steak">
+                </div>
+                <div class="dish-meta">
+                    <span class="dish-title">Imperial Ribeye</span>
+                    <span class="dish-price">₦55,000</span>
+                </div>
+                <p class="dish-desc">45-day dry-aged wagyu, smoked rosemary essence, pommes purée.</p>
+                <div class="order-link hover-target" onclick="openConcierge('Imperial Ribeye', 55000)">Request Dish</div>
+            </div>
+
+
+            <div class="dish-card reveal">
+                <div class="dish-img-box">
+                    <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=1856&auto=format&fit=crop" class="dish-img" alt="Dessert">
+                </div>
+                <div class="dish-meta">
+                    <span class="dish-title">Midnight Silk</span>
+                    <span class="dish-price">₦18,000</span>
+                </div>
+                <p class="dish-desc">Dark chocolate sphere, raspberry fluid gel, hot caramel pour.</p>
+                <div class="order-link hover-target" onclick="openConcierge('Midnight Silk', 18000)">Request Dish</div>
+            </div>
+        </div>
+
+    </section>
+    </section>
+
+    <section class="interactive-table reveal">
+        <div class="section-header" style="text-align: center; border: none; margin-bottom: 50px;">
+            <h2>The Architect's Table</h2>
+            <p>Customize your experience size</p>
+        </div>
+        
+        <div class="calc-wrapper">
+            <div class="calc-controls">
+                <h3>Guest Count</h3>
+                <p style="color:#666; font-size: 0.9rem;">Adjust the slider to estimate ingredients for a private event.</p>
+                <div class="slider-container">
+                    <input type="range" min="1" max="20" value="2" class="hover-target" id="guestRange" oninput="updateCalc()">
+                </div>
+                <p style="font-size: 2rem; color: #fff;"><span id="guestDisplay">2</span> <span style="font-size:1rem; color:#666;">GUESTS</span></p>
+            </div>
+            <div class="calc-display" id="ingredientBox">
+                </div>
+        </div>
+    </section>
+
+    <div class="modal-wrap" id="modal">
+        <div class="concierge-card">
+            <div class="close-btn hover-target" onclick="closeModal()">&times;</div>
+            <div class="concierge-title">Confirm Request</div>
+            
+            <form id="orderForm" action="https://formsubmit.co/quasarfusion01@gmail.com" method="POST">
+                <input type="hidden" name="_honey" style="display:none">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="http://localhost:5500/index.html"> <input type="hidden" id="prodName" name="Product">
+                <input type="hidden" id="prodPrice" name="Amount">
+
+                <div class="input-group">
+                    <input type="text" id="cName" name="Name" required>
+                    <label>Full Name</label>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="cEmail" name="Email" required>
+                    <label>Email Address</label>
+                </div>
+                <div class="input-group">
+                    <textarea name="Address" rows="1" required></textarea>
+                    <label>Delivery Details</label>
+                </div>
+
+                <div style="margin-top:20px; display:flex; justify-content:space-between; color: #888;">
+                    <span>Total Amount</span>
+                    <span id="displayPrice" style="color:#fff; font-weight:bold;">₦0.00</span>
+                </div>
+
+                <button type="button" class="pay-btn hover-target" onclick="initiatePayment()">Secure Payment</button>
+            </form>
+        </div>
     </div>
 
-    <footer>Built with honest lines of code</footer>
-  </div>
+    <script>
+        // --- 1. CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorCircle = document.getElementById('cursor-circle');
+        const hoverTargets = document.querySelectorAll('.hover-target');
 
-  <script>
-    const NAME = 'Testimony';
-    const MESSAGES = [
-      `Dear ${NAME},\n`,
-      `I don't know if this is necessary but I will say it.\n`,
-      `I am sorry. Not as a comment or a quick fix, but as an honest commit.\n`,
-      `You know I would not mean to hurt you in any way, mabinu baby.\n\n`,
-      `I was truly annoyed that day but I did not see it as something serious.\n\n`,
-      `Lots of love, from the heart, ~Ahmad~ ❤️`,
-    ];
+     window.addEventListener('mousemove', (e) => {
+    const posX = e.clientX;
+    const posY = e.clientY;
 
-    const typeEl = document.getElementById('type');
-    const replay = document.getElementById('replay');
-    const serenade = document.getElementById('serenade');
+    // Dot follows instantly
+    cursorDot.style.left = `${posX}px`;
+    cursorDot.style.top = `${posY}px`;
 
-    function typeMessages(speed = 30) {
-      typeEl.textContent = '';
-      let i = 0, j = 0, current = '';
-      clearInterval(window._typing);
-      window._typing = setInterval(() => {
-        if (i >= MESSAGES.length) { clearInterval(window._typing); return }
-        const msg = MESSAGES[i];
-        current += msg[j++] || '';
-        typeEl.textContent = current + (j < msg.length ? '|' : '');
+    // Circle follows with lag (css transition)
+    cursorCircle.style.left = `${posX}px`;
+    cursorCircle.style.top = `${posY}px`;
+});
 
-        if (j % 5 === 0) launchWordAndHeart();
 
-        if (j >= msg.length) { i++; j = 0; current += '\n'; }
-      }, speed);
-    }
 
-    function playTune() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const now = ctx.currentTime;
-        const notes = [440, 523.25, 659.25, 784];
-        notes.forEach((f, idx) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type = 'sine'; o.frequency.value = f;
-          g.gain.value = 0.0001;
-          o.connect(g); g.connect(ctx.destination);
-          o.start(now + idx * 0.2);
-          g.gain.linearRampToValueAtTime(0.06, now + idx * 0.02);
-          g.gain.exponentialRampToValueAtTime(0.0001, now + 1);
-          o.stop(now + 1.2);
+        hoverTargets.forEach(target => {
+            target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
         });
-      } catch (e) { console.warn('Audio not supported', e); }
+
+        // --- 2. SCROLL REVEAL ANIMATION ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- 3. CALCULATOR LOGIC ---
+        const ingredients = [
+            { name: 'Wagyu Beef (g)', base: 250 },
+            { name: 'Truffle Oil (ml)', base: 10 },
+            { name: 'Vintage Wine (ml)', base: 150 }
+        ];
+
+        function updateCalc() {
+            const guests = document.getElementById('guestRange').value;
+            document.getElementById('guestDisplay').innerText = guests;
+            
+            const box = document.getElementById('ingredientBox');
+            box.innerHTML = '';
+            
+            ingredients.forEach(item => {
+                let total = item.base * guests;
+                box.innerHTML += `
+                    <div class="calc-row">
+                        <span style="color:#888;">${item.name}</span>
+                        <span style="color:#fff;">${total}</span>
+                    </div>
+                `;
+            });
+           box.innerHTML += `
+    <div class="calc-total">Estimated Prep: ${guests * 20} mins</div>
+`;
+
+        }
+        updateCalc(); // Init
+
+        // --- 4. MODAL & PAYSTACK ---
+        let currentCost = 0;
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({behavior: 'smooth'});
+        }
+
+        function openConcierge(product, price) {
+            document.getElementById('modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('modal').classList.add('open'), 10);
+            
+            document.getElementById('prodName').value = product;
+            document.getElementById('prodPrice').value = price;
+            document.getElementById('displayPrice').innerText = '₦' + price.toLocaleString();
+            currentCost = price;
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('open');
+            setTimeout(() => document.getElementById('modal').style.display = 'none', 500);
+        }
+
+        function initiatePayment() {
+            
+    const name = document.getElementById('cName').value;
+    const email = document.getElementById('cEmail').value;
+
+    if (!currentCost || currentCost <= 0) {
+        alert("Please select a dish first.");
+        return;
     }
 
-    function launchWordAndHeart() {
-      const word = document.createElement('div');
-      word.className = 'float-item';
-      word.textContent = 'TESTIMONY';
-      word.style.left = (10 + Math.random() * 70) + '%';
-      document.querySelector('.card').appendChild(word);
-      word.animate([
-        { transform: 'translateY(0) scale(0.7)', opacity: 0 },
-        { transform: 'translateY(-420px) scale(1)', opacity: 1 }
-      ], { duration: 3200, easing: 'ease-out' });
-      setTimeout(() => word.remove(), 4200);
-
-      const h = document.createElement('div');
-      h.className = 'heart';
-      h.style.left = (20 + Math.random() * 60) + '%';
-      document.querySelector('.card').appendChild(h);
-      h.animate([
-        { transform: 'translateY(0) scale(0.6)', opacity: 0 },
-        { transform: 'translateY(-420px) scale(1)', opacity: 1 }
-      ], { duration: 3000, easing: 'ease-out' });
-      setTimeout(() => h.remove(), 4000);
+    if (!name || !email) {
+        alert("Please provide your details.");
+        return;
     }
 
-    typeMessages();
+    let handler = PaystackPop.setup({
+        key: "pk_test_6fca50e065add0586dccdc7b8a0804bac033d639",
+        email: email,
+        amount: currentCost * 100,
+        currency: "NGN",
+        ref: 'ORD_' + Date.now(),
+        callback: function () {
+            document.getElementById('orderForm').submit();
+        }
+    });
 
-    replay.addEventListener('click', () => { typeMessages(); });
-    serenade.addEventListener('click', () => { playTune(); });
-  </script>
+    handler.openIframe();
+}
+
+    </script>
 </body>
 </html>
